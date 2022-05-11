@@ -5,7 +5,9 @@ import HelloWorld from "@/components/HelloWorld.vue";
 
 <template>
   <header>
-    <h2 style="text-align: center; font-weight: bold">Santo Food Park</h2>
+    <h2 style="text-align: center; font-weight: bold; color: #fadc5f">
+      Santo Food Park
+    </h2>
   </header>
 
   <RouterView />
@@ -13,6 +15,7 @@ import HelloWorld from "@/components/HelloWorld.vue";
 
 <style>
 @import "@/assets/base.css";
+
 @media print {
   header {
     display: none;

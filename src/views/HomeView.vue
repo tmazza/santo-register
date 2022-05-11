@@ -6,6 +6,7 @@
 
       <div class="form">
         <textarea
+          class="form-control"
           name="order"
           id="order"
           cols="30"
@@ -14,6 +15,7 @@
         ></textarea>
         <br />
         <input
+          class="form-control"
           type="number"
           min="0"
           max="100000"
@@ -22,21 +24,24 @@
         />
       </div>
       <br />
-      <button @click="add" class="button">Imprimir</button>
+      <button @click="add" class="btn btn-info">Imprimir</button>
     </div>
     <br />
     <hr />
     <br />
     <div>
       <b>Últimos pedidos</b>
-
-      <div v-for="o of orders" :key="o.id" class="card">
-        <!-- <button @click="remove(o.id)">&times;</button> -->
-        <button @click="print(o.id)">Imprimir</button>
-        <br />
-
-        {{ o.description }}
-      </div>
+      <table>
+        <tr v-for="o of orders" :key="o.id">
+          <td>
+            <button class="btn btn-info btn-sm" @click="print(o.id)">
+              Imprimir
+            </button>
+          </td>
+          <td style="padding-left: 6px">{{ o.description }}</td>
+          <td>{{ o.amount }}</td>
+        </tr>
+      </table>
     </div>
   </main>
   <div id="print">
@@ -68,16 +73,18 @@ export default {
       }
 
       let id = this.currentDate();
-      let description = id + "\n" + this.order;
+      let description =
+        id + "\n" + this.order.description + "\n\nTotal: " + this.order.amount;
 
+      this.order.description = description;
       this.order.id = id;
 
       this.orders.push(this.order);
 
       this.toPrint = description;
-      // this.$nextTick(() => {
-      //   window.print();
-      // });
+      this.$nextTick(() => {
+        window.print();
+      });
       this.resetOrder();
 
       this.updateStorage();
@@ -143,11 +150,6 @@ main {
 textarea {
   text-align: left;
 }
-.card {
-  text-align: left;
-  border: 1px solid #dadada;
-  margin-top: 12px;
-}
 
 #print {
   background: white;
@@ -161,6 +163,13 @@ textarea {
 }
 .form input {
   margin-top: 8px;
+}
+table {
+  width: 100%;
+}
+table tr td {
+  text-align: left;
+  padding: 12px;
 }
 
 @media print {
