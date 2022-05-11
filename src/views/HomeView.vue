@@ -4,13 +4,23 @@
       <b>Novo pedido</b>
       <br />
 
-      <textarea
-        name="order"
-        id="order"
-        cols="30"
-        rows="10"
-        v-model="order"
-      ></textarea>
+      <div class="form">
+        <textarea
+          name="order"
+          id="order"
+          cols="30"
+          rows="10"
+          v-model="order.description"
+        ></textarea>
+        <br />
+        <input
+          type="number"
+          min="0"
+          max="100000"
+          step="0.05"
+          v-model="order.amount"
+        />
+      </div>
       <br />
       <button @click="add" class="button">Imprimir</button>
     </div>
@@ -20,9 +30,10 @@
     <div>
       <b>Últimos pedidos</b>
 
-      <div v-for="o of ordersSorted" :key="o.id" class="card">
+      <div v-for="o of orders" :key="o.id" class="card">
         <!-- <button @click="remove(o.id)">&times;</button> -->
         <button @click="print(o.id)">Imprimir</button>
+        <br />
 
         {{ o.description }}
       </div>
@@ -37,14 +48,17 @@
 export default {
   data() {
     return {
-      order: "",
+      order: {
+        id: "",
+        description: "",
+        amount: 0,
+      },
       orders: [],
       toPrint: "",
     };
   },
   mounted() {
     let items = JSON.parse(window.localStorage.getItem("orders"));
-    console.log("LS", items);
     this.orders = items || [];
   },
   methods: {
@@ -56,17 +70,15 @@ export default {
       let id = this.currentDate();
       let description = id + "\n" + this.order;
 
-      this.orders.push({
-        id: id,
-        description: description,
-      });
+      this.order.id = id;
+
+      this.orders.push(this.order);
 
       this.toPrint = description;
-      this.$nextTick(() => {
-        window.print();
-      });
-
-      this.order = "";
+      // this.$nextTick(() => {
+      //   window.print();
+      // });
+      this.resetOrder();
 
       this.updateStorage();
     },
@@ -97,7 +109,16 @@ export default {
     print(id) {
       let order = this.orders.find((o) => o.id == id);
       this.toPrint = order.description;
-      window.print();
+      this.$nextTick(() => {
+        window.print();
+      });
+    },
+    resetOrder() {
+      this.order = {
+        id: "",
+        description: "",
+        amount: 0,
+      };
     },
   },
   computed: {
@@ -115,7 +136,6 @@ export default {
 <style scoped>
 main {
   margin: 0 auto;
-  border: 1px solid red;
   max-width: 320px;
   text-align: center;
 }
@@ -125,7 +145,8 @@ textarea {
 }
 .card {
   text-align: left;
-  border: 1px solid blue;
+  border: 1px solid #dadada;
+  margin-top: 12px;
 }
 
 #print {
@@ -133,6 +154,13 @@ textarea {
   color: #000000;
   font-size: 14px;
   display: none;
+}
+.form {
+  display: flex;
+  flex-direction: column;
+}
+.form input {
+  margin-top: 8px;
 }
 
 @media print {
