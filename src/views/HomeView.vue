@@ -175,6 +175,7 @@ table tr td {
 @media print {
   #print {
     display: block;
+    color: #000000 !important;
   }
   main {
     display: none;
