@@ -1,6 +1,6 @@
 <template>
   <main>
-    <div style="text-align: center">
+    <div style="text-align: center; max-width: 320px; margin: 0 auto">
       <b>Novo pedido</b>
       <br />
 
@@ -26,18 +26,21 @@
       <br />
       <button @click="add" class="btn btn-info">Imprimir</button>
     </div>
-    <br />
+
     <hr />
     <br />
-    <div>
-      <b>Últimos pedidos</b>
+    <div style="margin: 0 auto; max-width: 640px">
+      <b>
+        Últimos pedidos <small>({{ lastCount }})</small>
+      </b>
       <table>
-        <tr v-for="o of orders" :key="o.id">
+        <tr v-for="o of ordersSorted" :key="o.id">
           <td>
             <button class="btn btn-info btn-sm" @click="print(o.id)">
               Imprimir
             </button>
           </td>
+          <td>{{ o.idSeq }}</td>
           <td style="padding-left: 6px">{{ o.description }}</td>
           <td>{{ o.amount }}</td>
         </tr>
@@ -55,16 +58,23 @@ export default {
     return {
       order: {
         id: "",
+        idSeq: 0,
         description: "",
         amount: 0,
       },
       orders: [],
       toPrint: "",
+      lastCount: 1,
     };
   },
   mounted() {
     let items = JSON.parse(window.localStorage.getItem("orders"));
     this.orders = items || [];
+
+    let lastCount = parseInt(
+      JSON.parse(window.localStorage.getItem("lastCount"))
+    );
+    this.lastCount = lastCount || 1;
   },
   methods: {
     add() {
@@ -78,12 +88,13 @@ export default {
 
       this.order.description = description;
       this.order.id = id;
+      this.order.idSeq = this.lastCount;
 
       this.orders.push(this.order);
 
       this.toPrint = description;
       this.$nextTick(() => {
-        window.print();
+        // window.print();
       });
       this.resetOrder();
 
@@ -95,6 +106,7 @@ export default {
     },
     updateStorage() {
       window.localStorage.setItem("orders", JSON.stringify(this.orders));
+      window.localStorage.setItem("lastCount", ++this.lastCount);
     },
     currentDate() {
       let data = new Date();
@@ -130,11 +142,9 @@ export default {
   },
   computed: {
     ordersSorted() {
-      let items = this.orders;
-      items.sort();
-      items.reverse();
-
-      return items;
+      return this.orders.sort((a, b) => {
+        return b.idSeq - a.idSeq;
+      });
     },
   },
 };
@@ -143,7 +153,6 @@ export default {
 <style scoped>
 main {
   margin: 0 auto;
-  max-width: 320px;
   text-align: center;
 }
 

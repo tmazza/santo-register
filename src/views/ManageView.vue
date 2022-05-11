@@ -36,6 +36,7 @@ export default {
     },
     updateStorage() {
       window.localStorage.setItem("orders", JSON.stringify(this.orders));
+      window.localStorage.setItem("lastCount", 1);
     },
   },
 };
