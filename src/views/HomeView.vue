@@ -94,7 +94,7 @@ export default {
 
       this.toPrint = description;
       this.$nextTick(() => {
-        // window.print();
+        window.print();
       });
       this.resetOrder();
 
