@@ -64,7 +64,7 @@ export default {
       },
       orders: [],
       toPrint: "",
-      lastCount: 1,
+      lastCount: 0,
     };
   },
   mounted() {
@@ -74,11 +74,11 @@ export default {
     let lastCount = parseInt(
       JSON.parse(window.localStorage.getItem("lastCount"))
     );
-    this.lastCount = lastCount || 1;
+    this.lastCount = lastCount || 0;
   },
   methods: {
     add() {
-      if (!this.order) {
+      if (!this.order.description) {
         return;
       }
 
@@ -135,6 +135,7 @@ export default {
     resetOrder() {
       this.order = {
         id: "",
+		idSeq: "",
         description: "",
         amount: 0,
       };
